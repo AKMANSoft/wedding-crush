@@ -1,5 +1,27 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from 'next/link'
+import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
+import { getServerAuth } from "~/server/auth";
+
+
+
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = await getServerAuth(ctx)
+  if (session) {
+    return {
+      redirect: {
+        destination: "/listing",
+        permanent: false,
+      }
+    }
+  }
+  return { props: {} }
+}
+
+
+
+
 
 export default function Page() {
 

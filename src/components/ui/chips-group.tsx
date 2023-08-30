@@ -25,7 +25,7 @@ export default function ChipsGroup({ value, onChange, options }: ChipsGroupProps
         <div className="flex items-center gap-4 px-3 py-2 border border-slate-200 rounded-md w-full">
             {
                 options?.map((opt) => (
-                    <button key={opt}
+                    <button type="button" key={opt}
                         onClick={() => setActiveChip(opt)}
                         className={cn(
                             "outline-none border border-pink-500 px-5 py-1.5 rounded-md text-xs font-medium",
