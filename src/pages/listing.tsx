@@ -5,68 +5,6 @@ import { getServerAuth } from "~/server/auth";
 import { trpcClient } from "~/utils/api";
 
 
-// const users = [
-//     {
-//         name: "User 1",
-//         photo: '/images/photo-1.jpg',
-//         gender: "FEMALE"
-//     },
-//     {
-//         name: "User 2",
-//         photo: '/images/photo-2.jpg',
-//         gender: "MALE"
-//     },
-//     {
-//         name: "User 3",
-//         photo: '/images/photo-3.jpg',
-//         gender: "MALE"
-//     },
-//     {
-//         name: "User 1",
-//         photo: '/images/photo-1.jpg',
-//         gender: "FEMALE"
-//     },
-//     {
-//         name: "User 2",
-//         photo: '/images/photo-2.jpg',
-//         gender: "MALE"
-//     },
-//     {
-//         name: "User 3",
-//         photo: '/images/photo-3.jpg',
-//         gender: "MALE"
-//     },
-//     {
-//         name: "User 1",
-//         photo: '/images/photo-1.jpg',
-//         gender: "FEMALE"
-//     },
-//     {
-//         name: "User 2",
-//         photo: '/images/photo-2.jpg',
-//         gender: "MALE"
-//     },
-//     {
-//         name: "User 3",
-//         photo: '/images/photo-3.jpg',
-//         gender: "MALE"
-//     },
-//     {
-//         name: "User 1",
-//         photo: '/images/photo-1.jpg',
-//         gender: "FEMALE"
-//     },
-//     {
-//         name: "User 2",
-//         photo: '/images/photo-2.jpg',
-//         gender: "MALE"
-//     },
-//     {
-//         name: "User 3",
-//         photo: '/images/photo-3.jpg',
-//         gender: "MALE"
-//     },
-// ]
 
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -106,9 +44,9 @@ export default function Page() {
                                     users?.map((user) => (
                                         <Card key={user.name} className="bg-white rounded-md overflow-hidden">
                                             <CardContent className="p-0">
-                                                <Image src={user.gender === "FEMALE" ? "/images/photo-1.jpg" : "/images/photo-2.jpg"}
+                                                <Image src={user.image}
                                                     alt="" width={200} height={300}
-                                                    className="w-full object-cover object-center h-[200px] md:h-[250px]" />
+                                                    className="w-full object-cover bg-black object-center h-[200px] md:h-[250px]" />
                                                 <div className="p-1 px-3">
                                                     <h3 className="text-base font-bold">
                                                         {user.name}

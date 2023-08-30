@@ -11,6 +11,10 @@ export const env = createEnv({
         : z.string().min(1).optional(),
     NEXTAUTH_URL: z.string().url(),
     BASE_URL: z.string().url(),
+    AWS_BUCKET: z.string(),
+    AWS_KEY: z.string(),
+    AWS_SECRET: z.string(),
+    AWS_REGION: z.string(),
   },
 
 
@@ -24,6 +28,10 @@ export const env = createEnv({
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     BASE_URL: process.env.BASE_URL,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+    AWS_BUCKET: process.env.AWS_BUCKET,
+    AWS_KEY: process.env.AWS_KEY,
+    AWS_SECRET: process.env.AWS_SECRET,
+    AWS_REGION: process.env.AWS_REGION,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });

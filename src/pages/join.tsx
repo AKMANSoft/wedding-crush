@@ -58,7 +58,6 @@ export default function Page() {
     const handleFormSubmit = async (data: JoinFormSchema) => {
         const res = await mutateAsync({
             ...data,
-            image: ""
         })
 
         if (res) {
@@ -68,7 +67,6 @@ export default function Page() {
                 username: res.username,
                 password: res.password,
             })
-            router.push("/listing")
         }
     }
 
@@ -165,7 +163,7 @@ export default function Page() {
                         </CardContent>
                         <CardFooter className="flex items-center justify-between">
                             <div></div>
-                            <Button type="submit" className="bg-opacity-90">
+                            <Button type="submit" disabled={form.formState.isSubmitting} className="bg-opacity-90">
                                 {
                                     form.formState.isSubmitting ?
                                         <span className="w-5 h-5 border-2 border-white rounded-full border-t-transparent animate-spin" />
