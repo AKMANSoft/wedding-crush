@@ -75,13 +75,13 @@ export default function Page() {
             <Card className="w-full max-w-screen-md rounded-md bg-white">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(handleFormSubmit)}>
-                        <CardHeader>
-                            <CardTitle className="text-xl text-center font-bold text-pink-500">
-                                Join the pool of singles at this wedding.
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-5">
+                        <CardContent className="p-6">
+                            <div className="flex items-center justify-center">
+                                <h2 className="text-lg border-b-2 border-primary text-center font-light text-secondary font-solway">
+                                    Please fill this form
+                                </h2>
+                            </div>
+                            <div className="space-y-[22px] mt-8">
                                 <FormField
                                     control={form.control}
                                     name="name"

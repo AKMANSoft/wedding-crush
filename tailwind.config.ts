@@ -14,6 +14,15 @@ export default {
       },
     },
     extend: {
+      colors: {
+        primary: "#FF9797",
+        secondary: "#1B3F57",
+      },
+      fontFamily: {
+        brittany: "Brittany Signature, sans-serif",
+        inter: "Inter, sans-serif",
+        solway: "Solway, sans-serif"
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },

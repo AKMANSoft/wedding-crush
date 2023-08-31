@@ -6,12 +6,13 @@ import Head from "next/head";
 import { trpcClient } from "~/utils/api";
 
 
+
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <div className="bg-gradient-to-l from-pink-500 to-red-500">
+    <div className="bg-primary">
       <Head>
         <title>Wedding Crush</title>
         <meta name="description" content="" />
