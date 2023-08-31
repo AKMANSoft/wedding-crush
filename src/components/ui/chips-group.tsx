@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import { cn } from "~/utils/common";
 
 
+
+type ChipOption = {
+    value: string;
+    icon: string;
+}
+
+
 type ChipsGroupProps = {
     options?: string[];
     value?: string;
