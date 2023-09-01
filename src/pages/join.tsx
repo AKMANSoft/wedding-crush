@@ -1,35 +1,19 @@
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardContent, CardFooter } from "~/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "~/components/ui/form";
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { Gender, UserInterest } from "@prisma/client";
+import { Gender, UserInterest, UserSide } from "@prisma/client";
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from "~/components/ui/input";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Button } from "~/components/ui/button";
-import { cn } from "~/utils/common";
 import ChipsGroup from "~/components/ui/chips-group";
-import { AvatarIcon } from "@radix-ui/react-icons";
-import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import { UploadIcon } from "@radix-ui/react-icons";
 import { trpcClient } from "~/utils/api";
 import { signIn } from 'next-auth/react'
-
-
-
-// export const getServerSideProps: GetServerSideProps = async (ctx) => {
-//     const session = await getServerAuth(ctx)
-//     if (session) {
-//         return {
-//             redirect: {
-//                 destination: "/listing",
-//                 permanent: false,
-//             }
-//         }
-//     }
-//     return { props: {} }
-// }
-
+import { bothGenderSvg, femaleSvg, maleSvg } from "~/utils/icons";
+import Resizer from "react-image-file-resizer";
+import { useRouter } from 'next/navigation'
 
 
 
@@ -39,6 +23,7 @@ export const joinFormSchema = z.object({
     image: z.string({ required_error: "Photo required." }),
     gender: z.enum([Gender.MALE, Gender.FEMALE], { required_error: "This field is required." }),
     interest: z.enum([UserInterest.MALE, UserInterest.FEMALE, UserInterest.BOTH], { required_error: "This field is required." }),
+    side: z.enum([UserSide.GROOM, UserSide.BRIDE], { required_error: "This field is required." }),
     password: z.string({ required_error: "This field is required." }).optional().default("")
 })
 
@@ -46,7 +31,7 @@ type JoinFormSchema = z.infer<typeof joinFormSchema>
 
 
 export default function Page() {
-    const router = useRouter();
+    const router = useRouter()
     const form = useForm<JoinFormSchema>({
         resolver: zodResolver(joinFormSchema),
         mode: "onSubmit",
@@ -59,23 +44,25 @@ export default function Page() {
         const res = await mutateAsync({
             ...data,
         })
-
         if (res) {
-            const loginRes = await signIn("credentials", {
-                callbackUrl: "/listing",
-                redirect: true,
+            const signinRes = await signIn("credentials", {
+                callbackUrl: "/gallery",
+                redirect: false,
                 username: res.username,
                 password: res.password,
             })
+            if (signinRes?.ok && !signinRes.error) {
+                router.push("/gallery")
+            }
         }
     }
 
     return (
-        <main className=" flex min-h-screen flex-col items-center justify-center py-10">
-            <Card className="w-full max-w-screen-md rounded-md bg-white">
+        <main className=" flex min-h-screen flex-col items-center justify-center py-20 px-4 bg-primary">
+            <Card className="w-full max-w-[600px] rounded-md bg-white pb-5">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(handleFormSubmit)}>
-                        <CardContent className="p-6">
+                        <CardContent className="p-6 px-5">
                             <div className="flex items-center justify-center">
                                 <h2 className="text-lg border-b-2 border-primary text-center font-light text-secondary font-solway">
                                     Please fill this form
@@ -104,11 +91,15 @@ export default function Page() {
                                             <FormControl>
                                                 <ChipsGroup
                                                     value={field.value}
+                                                    chipClassName="w-1/2"
                                                     onChange={(value) => {
                                                         form.setValue("interest", (value as Gender) === "MALE" ? "FEMALE" : "MALE")
                                                         field.onChange(value)
                                                     }}
-                                                    options={[Gender.MALE, Gender.FEMALE]} />
+                                                    options={[
+                                                        { icon: maleSvg, value: Gender.MALE },
+                                                        { icon: femaleSvg, value: Gender.FEMALE },
+                                                    ]} />
                                             </FormControl>
                                             {fieldState.error && <FormMessage />}
                                         </FormItem>
@@ -124,7 +115,32 @@ export default function Page() {
                                                 <ChipsGroup
                                                     value={field.value}
                                                     onChange={(value) => field.onChange(value)}
-                                                    options={[UserInterest.MALE, UserInterest.FEMALE, UserInterest.BOTH]} />
+                                                    chipClassName="w-1/3 px-1"
+                                                    options={[
+                                                        { icon: maleSvg, value: UserInterest.MALE },
+                                                        { icon: femaleSvg, value: UserInterest.FEMALE },
+                                                        { icon: bothGenderSvg, value: UserInterest.BOTH },
+                                                    ]} />
+                                            </FormControl>
+                                            {fieldState.error && <FormMessage />}
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="side"
+                                    render={({ field, fieldState }) => (
+                                        <FormItem>
+                                            <FormLabel>From which side are you?</FormLabel>
+                                            <FormControl>
+                                                <ChipsGroup
+                                                    value={field.value}
+                                                    chipClassName="w-1/2"
+                                                    onChange={(value) => field.onChange(value)}
+                                                    options={[
+                                                        { icon: maleSvg, value: UserSide.GROOM },
+                                                        { icon: femaleSvg, value: UserSide.BRIDE },
+                                                    ]} />
                                             </FormControl>
                                             {fieldState.error && <FormMessage />}
                                         </FormItem>
@@ -134,8 +150,8 @@ export default function Page() {
                                     control={form.control}
                                     name="image"
                                     render={({ field, fieldState }) => (
-                                        <FormItem>
-                                            <FormLabel>Photo</FormLabel>
+                                        <FormItem className="pt-5">
+                                            <FormLabel></FormLabel>
                                             <FormControl>
                                                 <PhotoInputComponent
                                                     value={field.value}
@@ -146,29 +162,16 @@ export default function Page() {
                                         </FormItem>
                                     )}
                                 />
-                                {/* <FormField
-                                    control={form.control}
-                                    name="password"
-                                    render={({ field, fieldState }) => (
-                                        <FormItem>
-                                            <FormLabel>Password</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            {fieldState.error && <FormMessage />}
-                                        </FormItem>
-                                    )}
-                                /> */}
                             </div>
                         </CardContent>
-                        <CardFooter className="flex items-center justify-between">
+                        <CardFooter className="flex items-center mt-5 justify-between">
                             <div></div>
-                            <Button type="submit" disabled={form.formState.isSubmitting} className="bg-opacity-90">
+                            <Button type="submit" disabled={form.formState.isSubmitting} className="w-full h-[39px]">
                                 {
                                     form.formState.isSubmitting ?
                                         <span className="w-5 h-5 border-2 border-white rounded-full border-t-transparent animate-spin" />
                                         :
-                                        "Continue"
+                                        "Done"
                                 }
                             </Button>
                         </CardFooter>
@@ -182,13 +185,36 @@ export default function Page() {
 
 
 
-function blobToBase64(blob: File): Promise<string> {
-    return new Promise((resolve, _) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result?.toString() ?? "");
-        reader.readAsDataURL(blob);
+const resizeFile = (file: File) =>
+    new Promise<string | null>((resolve) => {
+        try {
+            Resizer.imageFileResizer(
+                file,
+                512,
+                512,
+                "JPEG",
+                100,
+                0,
+                (uri) => {
+                    resolve(uri.toString());
+                },
+                "base64"
+            );
+        } catch (error) {
+            console.log(error)
+            resolve(null)
+        }
     });
-}
+
+
+
+// function blobToBase64(blob: File): Promise<string> {
+//     return new Promise((resolve, _) => {
+//         const reader = new FileReader();
+//         reader.onloadend = () => resolve(reader.result?.toString() ?? "");
+//         reader.readAsDataURL(blob);
+//     });
+// }
 
 
 type PhotoInputComponentProps = {
@@ -204,7 +230,8 @@ function PhotoInputComponent({ value, onChange }: PhotoInputComponentProps) {
         const files = e.target.files;
         const firstFile = files?.[0]
         if (!firstFile) return;
-        const imageB64 = await blobToBase64(firstFile)
+        const imageB64 = await resizeFile(firstFile)
+        if (!imageB64) return;
         onChange?.(imageB64)
     }
 
@@ -225,22 +252,12 @@ function PhotoInputComponent({ value, onChange }: PhotoInputComponentProps) {
                 onChange={filesChangeHandler}
                 hidden
                 accept="image/*"
-                className="hidden"
-                capture="user" />
-            <button type="button"
-                onClick={() => inputRef.current?.click()}
-                className={cn(
-                    "rounded-full border aspect-square h-32 w-32 border-slate-200 flex items-center justify-center overflow-hidden",
-                    !capturedPhoto && "p-5"
-                )}>
-                {
-                    capturedPhoto ?
-                        <Image src={capturedPhoto} alt="" width={100} height={100} className="w-full h-full object-cover object-center" />
-                        :
-                        <AvatarIcon className="w-20 h-20" />
-                }
-            </button>
-        </div>
+                className="hidden" />
+            <Button type="button" className="w-full flex h-[35px] items-center justify-center gap-3"
+                onClick={() => inputRef.current?.click()}>
+                <UploadIcon /> <span>{capturedPhoto ? "Change Photo" : "Upload a Selfie"}</span>
+            </Button>
+        </div >
     )
 }
 

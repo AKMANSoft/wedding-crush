@@ -1,47 +1,53 @@
 import { useEffect, useState } from "react";
 import { cn } from "~/utils/common";
-
+import Image from 'next/image'
 
 
 type ChipOption = {
     value: string;
-    icon: string;
+    icon: (active: boolean) => JSX.Element;
 }
 
 
 type ChipsGroupProps = {
-    options?: string[];
+    options?: ChipOption[];
     value?: string;
     onChange?: (value: string) => void;
+    chipClassName?: string;
 }
 
-export default function ChipsGroup({ value, onChange, options }: ChipsGroupProps) {
-    const [activeChip, setActiveChip] = useState<string | undefined>(value);
+export default function ChipsGroup({ value, onChange, options, chipClassName }: ChipsGroupProps) {
+    const [activeChip, setActiveChip] = useState<ChipOption | undefined>(options?.find((opt) => opt.value === value));
 
 
     useEffect(() => {
-        if (activeChip) onChange?.(activeChip)
+        if (activeChip) onChange?.(activeChip.value)
     }, [activeChip])
 
     useEffect(() => {
-        setActiveChip(value)
+        setActiveChip(options?.find((opt) => opt.value === value))
     }, [value])
 
 
     return (
-        <div className="flex items-center gap-4 px-3 py-2 rounded-md w-full">
+        <div className="flex items-center gap-4 rounded-md w-full">
             {
                 options?.map((opt) => (
-                    <button type="button" key={opt}
+                    <button type="button" key={opt.value}
                         onClick={() => setActiveChip(opt)}
                         className={cn(
-                            "outline-none border border-pink-500 px-5 py-1.5 rounded-full text-xs font-medium",
-                            opt === activeChip && "bg-gradient-to-l from-pink-500 to-red-500 text-white",
+                            "outline-none border border-primary px-5 py-1.5 rounded-full text-sm font-light capitalize text-secondary",
+                            "flex items-center justify-center gap-2",
+                            opt.value === activeChip?.value && "bg-primary shadow-lg text-white",
+                            chipClassName
                         )}>
-                        {opt}
+                        <span className="fill-primary">
+                            {opt.icon(opt.value === activeChip?.value)}
+                        </span>
+                        <span>{opt.value.toLowerCase()}</span>
                     </button>
                 ))
             }
-        </div>
+        </div >
     )
 }

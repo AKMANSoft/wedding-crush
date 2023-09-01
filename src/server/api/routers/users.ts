@@ -4,6 +4,7 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { joinFormSchema } from "~/pages/join";
 import AWS from 'aws-sdk'
 import { env } from "~/env.mjs";
+import { updateProfileSchema } from "~/pages/profile";
 
 const usersPaginationInput = z.object({
     page: z.number(),
@@ -19,13 +20,12 @@ const uploadImageToS3 = async (image: string, key: string) => {
         region: env.AWS_REGION
     })
     const s3 = new AWS.S3();
-    const imageBuffer = Buffer.from(image, 'base64');
     const imageBlob = await fetch(image).then(res => res.blob())
 
 
     const params = {
         Bucket: env.AWS_BUCKET,
-        Key: key + ".jpg",
+        Key: `${key}-${(new Date()).getTime()}.jpg`,
         Body: Buffer.from(await imageBlob.arrayBuffer()),
         ContentType: "image/jpeg",
         // ACL: 'public-read',
@@ -101,7 +101,35 @@ const usersRouter = createTRPCRouter({
                         interest: input.interest,
                         name: input.name,
                         password: input.password,
-                        username: username
+                        username: username,
+                        side: input.side
+                    }
+                })
+                if (!user) throw new Error();
+                return user;
+            } catch (error) {
+                console.log(error)
+                return null
+            }
+        }),
+    update: protectedProcedure
+        .input(updateProfileSchema)
+        .mutation(async ({ ctx, input }) => {
+            const { db, session } = ctx;
+            const authUser = await getAuthUser(session)
+            if (!authUser) return null;
+            try {
+                const username = authUser.name
+                const imageS3Path = input.image ? await uploadImageToS3(input.image, username) : authUser.image
+                console.log("Image Upload Res = ", imageS3Path)
+                const user = await db.user.update({
+                    where: { id: authUser.id },
+                    data: {
+                        ...(input.gender && { gender: input.gender }),
+                        ...(input.name && { name: input.name }),
+                        ...(input.interest && { interest: input.interest }),
+                        ...(input.side && { side: input.side }),
+                        image: imageS3Path,
                     }
                 })
                 if (!user) throw new Error();

@@ -14,6 +14,7 @@ model User {
   password String
   image    String
   gender   Gender
+  side     UserSide
   interest UserInterest
 }
 
@@ -26,4 +27,9 @@ enum UserInterest {
   MALE
   FEMALE
   BOTH
+}
+
+enum UserSide {
+  GROOM
+  BRIDE
 }

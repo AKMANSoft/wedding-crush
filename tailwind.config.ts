@@ -1,7 +1,7 @@
 import { type Config } from "tailwindcss";
 
 export default {
-  darkMode: ["class"],
+  darkMode: 'class',
   content: [
     './src/**/*.{ts,tsx}',
   ],
@@ -17,6 +17,9 @@ export default {
       colors: {
         primary: "#FF9797",
         secondary: "#1B3F57",
+      },
+      screens: {
+        "xs": "400px"
       },
       fontFamily: {
         brittany: "Brittany Signature, sans-serif",

@@ -22,7 +22,7 @@ export function PopupReveal({
     return (
         <motion.div
             initial={{ scale: 0 }}
-            whileInView={{
+            animate={{
                 scale: 1,
                 transition: {
                     type: "spring",
@@ -52,7 +52,7 @@ export function TopRightReveal({
     return (
         <motion.div
             initial={{ y: "-100%", x: "100%" }}
-            whileInView={{
+            animate={{
                 y: 0,
                 x: 0,
                 transition: {
