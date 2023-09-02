@@ -1,14 +1,15 @@
 import { Card, CardContent } from "~/components/ui/card";
 import Image from 'next/image'
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
-import { getServerAuth } from "~/server/auth";
+import { getAuthUser, getServerAuth } from "~/server/auth";
 import { trpcClient } from "~/utils/api";
-import { femaleGallerySvg, maleGallerySvg } from "~/utils/icons";
+import { TrashIconSvg, femaleGallerySvg, maleGallerySvg } from "~/utils/icons";
+import { User } from "@prisma/client";
 
 
 
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps<{ authUser?: User | null }> = async (ctx) => {
     const session = await getServerAuth(ctx)
     if (!session) {
         return {
@@ -18,13 +19,26 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
             }
         }
     }
-    return { props: {} }
+    const authUser = await getAuthUser(session);
+    return { props: { authUser } }
 }
 
 
 
-export default function Page() {
+
+
+export default function Page({ authUser }: InferGetServerSidePropsType<typeof getServerSideProps>) {
     const { data: users, isLoading } = trpcClient.users.getByInterest.useQuery({ page: 1, perPage: -1 })
+    const { mutateAsync: deleteUser } = trpcClient.users.delete.useMutation()
+
+
+    const handleDeleteClick = async (user: User) => {
+        const res = await deleteUser({ id: user.id })
+        if (res) {
+            window.location.reload();
+        }
+    }
+
 
     return (
         <main className="min-h-screen p-5 pb-[65px]">
@@ -42,8 +56,10 @@ export default function Page() {
                         :
                         (
                             !users || users.length <= 0 ?
-                                <div className="w-full h-screen flex items-center justify-center">
-                                    <p className="text-secondary font-solway font-medium">No users found with your interest.</p>
+                                <div className="w-full h-full min-h-[600px] flex items-center justify-center">
+                                    <p className="text-secondary font-solway font-medium">
+                                        No singles found with your interest.
+                                    </p>
                                 </div>
                                 :
                                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6  gap-5">
@@ -51,10 +67,18 @@ export default function Page() {
                                         users?.map((user) => (
                                             <div key={user.id} className="shadow-2xl shadow-gray-600 relative rounded-xl bg-primary pl-2 pt-2">
                                                 <div className="rounded-xl relative overflow-hidden bg-white">
+                                                    {
+                                                        authUser?.type === "ADMIN" &&
+                                                        <button type="button"
+                                                            onClick={() => handleDeleteClick(user)}
+                                                            className="border-none outline-none absolute top-3 right-3">
+                                                            {TrashIconSvg()}
+                                                        </button>
+                                                    }
                                                     <Image src={user.image}
                                                         alt="" width={200} height={300}
                                                         className="w-full object-cover object-center rounded-xl h-[180px] xs:h-[250px] md:h-[300px]" />
-                                                    <div className="p-2 flex items-end justify-between absolute bottom-0 bg-gradient-to-t from-black from-50% to-transparent w-full">
+                                                    <div className="p-2 flex items-end justify-between absolute bottom-0 bg-gradient-to-t from-black/80 from-50% to-transparent w-full">
                                                         <div>
                                                             <h3 className="text-white font-solway text-lg leading-none">
                                                                 {user.name}

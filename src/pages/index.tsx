@@ -1,4 +1,4 @@
-import type { GetServerSideProps } from 'next'
+import type { GetServerSideProps, GetStaticPropsContext, InferGetServerSidePropsType } from 'next'
 import { getServerAuth } from "~/server/auth";
 import { Card, CardContent } from "~/components/ui/card";
 import Image from 'next/image'
@@ -6,52 +6,80 @@ import Typewriter from 'typewriter-effect';
 import { motion } from 'framer-motion'
 import { BottomReveal, PopupReveal, TopLeftReveal, TopRightReveal } from "~/components/framer-components";
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from "react";
-import groomBrideImage from '../../public/images/groom-bride-compressed.svg'
-import boyGirlImage from '../../public/images/boy-girl-compressed.svg'
+import { useState } from "react";
+import path from 'path';
+import fs from 'fs/promises'
+import { Button } from '~/components/ui/button';
+import { ArrowRightIcon } from '@radix-ui/react-icons';
+import { useTranslations } from 'next-intl';
 
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+
+export const getServerSideProps: GetServerSideProps<{
+  groomBrideImage: string,
+  boyGirlImage: string
+}> = async (ctx) => {
   const session = await getServerAuth(ctx)
   if (session) {
     return {
       redirect: {
-        destination: "/listing",
+        destination: "/gallery",
         permanent: false,
       }
     }
   }
-  return { props: {} }
+
+  const groomBrideImagePath = path.join(process.cwd(), `/public/images/groom-bride-compressed.svg`)
+  const boyGirlImagePath = path.join(process.cwd(), `/public/images/boy-girl-compressed.svg`)
+  let groomBrideImage: string;
+  let boyGirlImage: string;
+
+  try {
+    groomBrideImage = 'data:image/svg+xml;base64,' + Buffer.from(await fs.readFile(groomBrideImagePath)).toString('base64')
+    boyGirlImage = 'data:image/svg+xml;base64,' + Buffer.from(await fs.readFile(boyGirlImagePath)).toString('base64')
+  } catch {
+    groomBrideImage = "/images/groom-bride-compressed.svg"
+    boyGirlImage = "/images/boy-girl-compressed.svg"
+  }
+
+  return {
+    props: {
+      groomBrideImage,
+      boyGirlImage,
+      messages: (await import(`../../locales/${ctx.locale}.json`)).default
+    }
+  }
 }
 
 
 
-export default function Page() {
+export default function Page({ groomBrideImage, boyGirlImage }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [state, setState] = useState<"WELCOME" | "JOIN_POOL">("WELCOME")
   const router = useRouter()
+  const t = useTranslations("index")
 
 
 
-  const handlePageClick = (e: MouseEvent) => {
+  const handleNextClick = () => {
     if (state === "JOIN_POOL") router.push("/join")
     if (state === "WELCOME") setState("JOIN_POOL")
   }
 
-  useEffect(() => {
-    document.addEventListener("click", handlePageClick, true)
-    return () => {
-      document.removeEventListener('click', handlePageClick, true);
-    };
-  }, [state])
 
   return (
     <main className=" flex min-h-screen flex-col items-center justify-center py-20 px-4 bg-primary">
       {
         state === "JOIN_POOL" ?
-          <JoinPool />
+          <JoinPool boyGirlImage={boyGirlImage} />
           :
-          <WelcomeCard />
+          <WelcomeCard groomBrideImage={groomBrideImage} />
       }
+      <div className='flex items-center justify-center mt-2 w-full'>
+        <Button type='button' onClick={handleNextClick} variant="light" className='gap-3 w-full h-[39px]'>
+          <span>{t("next")}</span>
+          <ArrowRightIcon className='w-4 h-4' />
+        </Button>
+      </div>
     </main>
   );
 }
@@ -60,10 +88,11 @@ export default function Page() {
 
 
 type WelcomeCardProps = {
-  onFinish?: () => void
+  onFinish?: () => void;
+  groomBrideImage: string;
 }
 
-function WelcomeCard({ onFinish }: WelcomeCardProps) {
+function WelcomeCard({ onFinish, groomBrideImage }: WelcomeCardProps) {
   return (
     <Card className="w-full max-w-[600px] h-fit rounded-md overflow-hidden bg-white">
       <CardContent className="p-0 h-auto">
@@ -98,7 +127,7 @@ function WelcomeCard({ onFinish }: WelcomeCardProps) {
             <PopupReveal className="w-[80%]" bounce={0.5}>
               <Image
                 width={600} height={300}
-                priority 
+                priority
                 src={groomBrideImage} alt=""
                 className="w-full h-auto mt-10" />
             </PopupReveal>
@@ -138,10 +167,11 @@ function WelcomeCard({ onFinish }: WelcomeCardProps) {
 
 
 type JoinPoolProps = {
-  onFinish?: () => void
+  onFinish?: () => void;
+  boyGirlImage: string;
 }
 
-function JoinPool({ onFinish }: JoinPoolProps) {
+function JoinPool({ onFinish, boyGirlImage }: JoinPoolProps) {
   return (
     <Card className="w-full max-w-[600px] h-fit rounded-md overflow-hidden bg-white">
       <CardContent className="p-0 h-auto">
@@ -213,3 +243,7 @@ function JoinPool({ onFinish }: JoinPoolProps) {
     </Card>
   )
 }
+
+
+
+

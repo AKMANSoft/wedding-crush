@@ -11,7 +11,7 @@ const config = {
     domains: ["wedding-crush.s3.eu-central-1.amazonaws.com"]
   },
   i18n: {
-    locales: ["en"],
+    locales: ["en", "he"],
     defaultLocale: "en",
   },
 };

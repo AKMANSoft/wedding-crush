@@ -8,13 +8,14 @@ import { Input } from "~/components/ui/input";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Button } from "~/components/ui/button";
 import ChipsGroup from "~/components/ui/chips-group";
-import { UploadIcon } from "@radix-ui/react-icons";
+import { UploadIcon, ZoomInIcon } from "@radix-ui/react-icons";
 import { trpcClient } from "~/utils/api";
 import { signIn } from 'next-auth/react'
-import { bothGenderSvg, femaleSvg, maleSvg } from "~/utils/icons";
+import { bothGenderSvg, brideIconSvg, femaleSvg, groomIconSvg, maleSvg } from "~/utils/icons";
 import Resizer from "react-image-file-resizer";
 import { useRouter } from 'next/navigation'
-
+import Image from 'next/image'
+import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
 
 
 
@@ -93,7 +94,6 @@ export default function Page() {
                                                     value={field.value}
                                                     chipClassName="w-1/2"
                                                     onChange={(value) => {
-                                                        form.setValue("interest", (value as Gender) === "MALE" ? "FEMALE" : "MALE")
                                                         field.onChange(value)
                                                     }}
                                                     options={[
@@ -138,8 +138,8 @@ export default function Page() {
                                                     chipClassName="w-1/2"
                                                     onChange={(value) => field.onChange(value)}
                                                     options={[
-                                                        { icon: maleSvg, value: UserSide.GROOM },
-                                                        { icon: femaleSvg, value: UserSide.BRIDE },
+                                                        { icon: groomIconSvg, value: UserSide.GROOM },
+                                                        { icon: brideIconSvg, value: UserSide.BRIDE },
                                                     ]} />
                                             </FormControl>
                                             {fieldState.error && <FormMessage />}
@@ -190,8 +190,8 @@ const resizeFile = (file: File) =>
         try {
             Resizer.imageFileResizer(
                 file,
-                512,
-                512,
+                256,
+                256,
                 "JPEG",
                 100,
                 0,
@@ -257,117 +257,36 @@ function PhotoInputComponent({ value, onChange }: PhotoInputComponentProps) {
                 onClick={() => inputRef.current?.click()}>
                 <UploadIcon /> <span>{capturedPhoto ? "Change Photo" : "Upload a Selfie"}</span>
             </Button>
+            {
+                capturedPhoto &&
+                <div className="mt-5">
+                    <ImagePreviewPopup image={capturedPhoto} />
+                </div>
+            }
         </div >
     )
 }
 
-// type PhotoInputComponentProps = {
-//     value?: string | null;
-//     onChange?: (value: string) => void;
-// }
-
-// function PhotoInputComponent({ value, onChange }: PhotoInputComponentProps) {
-//     const inputRef = useRef<HTMLInputElement>(null);
-//     const [popupOpen, setPopupOpen] = useState(false);
-//     const [capturedPhoto, setCapturedPhoto] = useState<string | null>();
-//     const webcamRef = useRef<Webcam>(null);
-//     const capture = useCallback(
-//         () => {
-//             const imageSrc = webcamRef.current?.getScreenshot();
-//             setCapturedPhoto(imageSrc)
-//         },
-//         [webcamRef]
-//     );
-
-//     const filesChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-//         const files = e.target.files;
-//         if (!files || files.length <= 0) return;
-//         console.log(files[0])
-//     }
-
-
-//     useEffect(() => {
-//         setCapturedPhoto(value)
-//     }, [value])
-
-
-//     const handleContinueClick = () => {
-//         if (!capturedPhoto) return;
-//         onChange?.(capturedPhoto)
-//         setPopupOpen(false)
-//     }
 
 
 
+type ImagePreviewPopupProps = {
+    image: string;
+}
 
-//     return (
-//         <div>
-//             <input
-//                 type="file"
-//                 ref={inputRef}
-//                 onChange={filesChangeHandler}
-//                 hidden
-//                 className="hidden"
-//                 capture="user" />
-//             <Dialog
-//                 open={popupOpen}
-//                 onOpenChange={(value) => {
-//                     setCapturedPhoto(null)
-//                     setPopupOpen(value)
-//                 }}>
-//                 <DialogTrigger asChild>
-//                     <button type="button" className={cn(
-//                         "rounded-full border aspect-square h-32 w-32 border-slate-200 flex items-center justify-center overflow-hidden",
-//                         !capturedPhoto && "p-5"
-//                     )}>
-//                         {
-//                             capturedPhoto ?
-//                                 <Image src={capturedPhoto} alt="" width={100} height={100} className="w-full h-full object-cover object-center" />
-//                                 :
-//                                 <AvatarIcon className="w-20 h-20" />
-//                         }
-//                     </button>
-//                 </DialogTrigger>
-//                 <DialogContent className="sm:max-w-4xl p-0 overflow-hidden bg-white">
-//                     <div className="relative max-h-[95vh]">
-//                         {
-//                             capturedPhoto ?
-//                                 <div>
-//                                     <Image src={capturedPhoto} alt="" width={500} height={800} className="w-full h-full object-contain object-center" />
-//                                     <div className="absolute left-1/2 -translate-x-1/2 bottom-3 z-[10] flex items-center justify-center gap-4 w-full">
-//                                         <Button
-//                                             type="button"
-//                                             variant="dark"
-//                                             onClick={() => setCapturedPhoto(null)}
-//                                             className="text-white rounded-full h-auto text-xs md:text-sm">
-//                                             Capture again
-//                                         </Button>
-//                                         <Button onClick={handleContinueClick} type="button" variant="default" className="text-white rounded-full text-xs h-auto md:text-sm">
-//                                             Continue
-//                                         </Button>
-//                                     </div>
-//                                 </div>
-//                                 :
-//                                 <div className="w-full">
-//                                     <Webcam
-//                                         audio={false}
-//                                         height={800}
-//                                         screenshotFormat="image/jpeg"
-//                                         capture="user"
-//                                         ref={webcamRef}
-//                                         width={800}
-//                                         className="object-cover h-full object-center w-full"
-//                                         videoConstraints={{ facingMode: "user", aspectRatio: { exact: 1 } }}
-//                                     />
-//                                     <Button onClick={capture} type="button" variant="default" className="absolute left-1/2 -translate-x-1/2 bottom-3 z-[10] text-white rounded-full text-xs md:text-sm">
-//                                         Capture
-//                                     </Button>
-//                                 </div>
-//                         }
-
-//                     </div>
-//                 </DialogContent>
-//             </Dialog>
-//         </div>
-//     )
-// }
+function ImagePreviewPopup({ image }: ImagePreviewPopupProps) {
+    return (
+        <Dialog>
+            <DialogTrigger className="w-full relative rounded overflow-hidden">
+                <Image src={image} alt="" width={500} height={300}
+                    className="w-full aspect-video object-cover object-center h-auto shadow shadow-gray-500" />
+                <div className="p-1 absolute top-0 right-0 bg-gradient-to-bl from-black/10 to-transparent">
+                    <ZoomInIcon className="w-6 h-6  text-white" />
+                </div>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-lg min-h-screen p-0 flex items-center justify-center bg-white">
+                <Image src={image} alt="" width={600} height={600} className="aspect-auto w-full h-auto" />
+            </DialogContent>
+        </Dialog>
+    )
+}

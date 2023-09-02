@@ -26,7 +26,7 @@ declare module 'next-auth' {
 }
 
 
-type AuthCredentials = { username: string, password: string }
+type AuthCredentials = { username: string, password: string, adminLogin?: boolean; }
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -48,8 +48,11 @@ export const authOptions: AuthOptions = {
             username: username,
           },
         })
-        if (!user) throw new Error("NOT_FOUND")
-        // if (!(await comparePassword(password, user.password))) throw new Error("WRONG_PASSWORD")
+        if (!user) throw new Error("ACCOUNT_NOT_FOUND")
+        if (user.type === "ADMIN") {
+          if (!(await comparePassword(password, user.password)))
+            throw new Error("WRONG_PASSWORD")
+        }
         return { ...user, password: "" }
       },
     }),

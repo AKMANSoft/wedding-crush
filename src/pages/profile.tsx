@@ -10,7 +10,7 @@ import { Button } from "~/components/ui/button";
 import ChipsGroup from "~/components/ui/chips-group";
 import { UploadIcon } from "@radix-ui/react-icons";
 import { trpcClient } from "~/utils/api";
-import { bothGenderSvg, femaleSvg, maleSvg } from "~/utils/icons";
+import { bothGenderSvg, brideIconSvg, femaleSvg, groomIconSvg, maleSvg } from "~/utils/icons";
 import Resizer from "react-image-file-resizer";
 import Image from 'next/image'
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
@@ -83,7 +83,7 @@ export default function Page({ authUser }: InferGetServerSidePropsType<typeof ge
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(handleFormSubmit)}>
                             <CardContent className="p-6 px-5 relative">
-                                <div className="absolute -top-[80px] bg-primary rounded-full p-1 left-1/2 w-[118px] h-auto aspect-square -translate-x-1/2">
+                                <div className="absolute -top-[80px] bg-white border-[5px] border-primary rounded-full left-1/2 w-[118px] h-auto aspect-square -translate-x-1/2">
                                     <Image src={form.getValues("image") ?? ""} alt={authUser.name} width={114} height={114}
                                         className="w-full h-full object-cover object-center rounded-full" />
                                 </div>
@@ -156,8 +156,8 @@ export default function Page({ authUser }: InferGetServerSidePropsType<typeof ge
                                                         chipClassName="w-1/2"
                                                         onChange={(value) => field.onChange(value)}
                                                         options={[
-                                                            { icon: maleSvg, value: UserSide.GROOM },
-                                                            { icon: femaleSvg, value: UserSide.BRIDE },
+                                                            { icon: groomIconSvg, value: UserSide.GROOM },
+                                                            { icon: brideIconSvg, value: UserSide.BRIDE },
                                                         ]} />
                                                 </FormControl>
                                                 {fieldState.error && <FormMessage />}
@@ -209,8 +209,8 @@ const resizeFile = (file: File) =>
         try {
             Resizer.imageFileResizer(
                 file,
-                512,
-                512,
+                256,
+                256,
                 "JPEG",
                 100,
                 0,

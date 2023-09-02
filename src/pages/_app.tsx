@@ -1,3 +1,4 @@
+import { NextIntlClientProvider } from 'next-intl';
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
@@ -6,12 +7,11 @@ import Head from "next/head";
 import Link from "next/link";
 import { trpcClient } from "~/utils/api";
 import { useEffect } from "react";
-import { GallerySvgIcon, ProfileSvgIcon } from "~/utils/icons";
 import { usePathname } from 'next/navigation'
 import { cn } from "~/utils/common";
 
 
-const MyApp: AppType<{ session: Session | null }> = ({
+const App: AppType<{ session: Session | null, messages: any }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
@@ -26,7 +26,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   const showBottomNavigation = (pathname.startsWith("/gallery") || pathname.startsWith("/profile"))
 
   return (
-    <div>
+    <NextIntlClientProvider messages={pageProps.messages}>
       <Head>
         <title>Wedding Crush</title>
         <meta name="description" content="" />
@@ -39,25 +39,31 @@ const MyApp: AppType<{ session: Session | null }> = ({
         {
           showBottomNavigation && (
             <div className={cn(
-              "w-full flex fixed bottom-0 rounded-t-[20px] h-[44px] py-2",
+              "w-full flex items-center fixed bottom-0 rounded-t-[20px] h-[44px] overflow-hidden",
               pathname.startsWith("/profile") ? "bg-white" : "bg-primary"
             )}>
-              <Link href="/gallery" className="flex items-center h-full justify-center w-1/2">
-                {GallerySvgIcon(pathname.startsWith("/profile"))}
+              <Link href="/gallery" className={cn(
+                "w-1/2 flex items-center justify-center text-center h-full font-solway",
+                pathname.startsWith("/profile") ? "text-secondary" : "text-white"
+              )}>
+                Gallery
               </Link>
               <span className={cn(
-                "block h-full w-[3px] rounded-full",
+                "block h-[33px] w-[3px] rounded-full",
                 pathname.startsWith("/profile") ? "bg-primary" : "bg-white"
               )} />
-              <Link href="/profile" className="flex items-center h-full justify-center w-1/2">
-                {ProfileSvgIcon(pathname.startsWith("/profile"))}
+              <Link href="/profile" className={cn(
+                "w-1/2 flex items-center justify-center text-center h-full font-solway",
+                pathname.startsWith("/profile") ? "text-secondary" : "text-white"
+              )}>
+                Profile
               </Link>
             </div>
           )
         }
       </SessionProvider >
-    </div >
+    </NextIntlClientProvider >
   );
 };
 
-export default trpcClient.withTRPC(MyApp);
+export default trpcClient.withTRPC(App);

@@ -16,6 +16,14 @@ model User {
   gender   Gender
   side     UserSide
   interest UserInterest
+  type     UserType     @default(USER)
+}
+
+
+
+enum UserType {
+  ADMIN
+  USER
 }
 
 enum Gender {

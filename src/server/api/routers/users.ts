@@ -1,5 +1,5 @@
 import { getAuthUser } from "~/server/auth";
-import { z } from 'zod'
+import { number, z } from 'zod'
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { joinFormSchema } from "~/pages/join";
 import AWS from 'aws-sdk'
@@ -48,10 +48,11 @@ const usersRouter = createTRPCRouter({
             const { perPage, page } = input;
             return await db.user.findMany({
                 where: {
-                    ...(authUser.interest !== "BOTH" && {
+                    ...(authUser.type !== "ADMIN" && authUser.interest !== "BOTH" && {
                         gender: authUser.interest
                     }),
-                    id: { not: authUser.id }
+                    id: { not: authUser.id },
+                    type: { not: "ADMIN" }
                 },
                 orderBy: {
                     "name": "asc"
@@ -133,6 +134,22 @@ const usersRouter = createTRPCRouter({
                     }
                 })
                 if (!user) throw new Error();
+                return user;
+            } catch (error) {
+                console.log(error)
+                return null
+            }
+        }),
+    delete: protectedProcedure
+        .input(z.object({ id: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            const { db, session } = ctx;
+            const authUser = await getAuthUser(session)
+            if (!authUser || authUser.type !== "ADMIN") return null;
+            try {
+                const user = await db.user.delete({
+                    where: { id: input.id }
+                })
                 return user;
             } catch (error) {
                 console.log(error)
