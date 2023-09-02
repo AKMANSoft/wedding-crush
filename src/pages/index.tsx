@@ -73,9 +73,9 @@ export default function Page({ groomBrideImage, boyGirlImage }: InferGetStaticPr
           :
           <WelcomeCard groomBrideImage={groomBrideImage} />
       }
-      <div className='flex items-center justify-center mt-2 w-full'>
+      <div className='flex items-center justify-center mt-2 w-full max-w-[600px]'>
         <Button type='button' onClick={handleNextClick} variant="light" className='gap-3 w-full h-[39px]'>
-          <span>{t("next")}</span>
+          <span>{t("index.next")}</span>
           <ArrowRightIcon className='w-4 h-4' />
         </Button>
       </div>
@@ -92,6 +92,8 @@ type WelcomeCardProps = {
 }
 
 function WelcomeCard({ onFinish, groomBrideImage }: WelcomeCardProps) {
+  const t = useTranslations()
+
   return (
     <Card className="w-full max-w-[600px] h-fit rounded-md overflow-hidden bg-white">
       <CardContent className="p-0 h-auto">
@@ -116,7 +118,7 @@ function WelcomeCard({ onFinish, groomBrideImage }: WelcomeCardProps) {
             <h4 className="text-secondary font-solway transition-all h-9 font-light text-xl mt-3">
               <Typewriter
                 options={{
-                  strings: "Welcome to",
+                  strings: t("index.welcome"),
                   autoStart: true,
                   loop: false,
                   cursorClassName: "hidden"
@@ -133,7 +135,7 @@ function WelcomeCard({ onFinish, groomBrideImage }: WelcomeCardProps) {
             <h1 className="font-brittany text-4xl h-[40px] text-primary">
               <Typewriter
                 options={{
-                  strings: "Sharon & Ori's",
+                  strings: t("index.ori"),
                   autoStart: true,
                   loop: false,
                   cursorClassName: "hidden"
@@ -143,7 +145,7 @@ function WelcomeCard({ onFinish, groomBrideImage }: WelcomeCardProps) {
             <motion.h4 className="text-secondary font-solway h-9 font-light text-xl mt-3">
               <Typewriter
                 options={{
-                  strings: "Wedding",
+                  strings: t("index.wedding"),
                   autoStart: true,
                   loop: false,
                   cursorClassName: "hidden"
