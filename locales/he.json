@@ -1,18 +1,11 @@
 {
-    "index": {
-        "next": "Go Next",
-        "join_pool": "הצטרף לבריכת",
-        "singles": "יחידים",
-        "at_wedding":"בחתונה ",
-        "welcome":"ברוך הבא",
+        "next": "Next",
+        "join_pool": "Join the pool of",
+        "singles": "Single",
+        "at_wedding":"at the wedding ",
+        "welcome":"Welcome to",
         "ori":"Sharon & Ori's",
-        "wedding":"חֲתוּנָה"
-
-
-
-
-    },
-    "join":{
+        "wedding":"Wedding",   
         "fill_form": "רק מספר פרטים קטנים",
         "name":"שם",
         "gender":"מין",
@@ -23,7 +16,14 @@
         "groom":"החתן",
         "bride":"הכלה",
         "upload_selfie":"צרפ/י תמונה (רצוי סלפי)",
-        "done":"סיימנו!"
-
-    }
+        "update_selfie":"עדכן תמונה",
+        "update":"ערוך",
+        "done":"סיימנו!",
+        "groom_side":"צד חתן",
+        "bride_side":"צד כלה",
+        "interested_male":"מעוניינ/ת בגברים",
+        "interested_female":"מעוניינ/ת בנשים",
+        "interested_both":"מעוניינ/ת בכולם",
+        "single_at_wedding":"מי פנוי בחתונה",
+        "no_singles":"כרגע עוד לא הצטרפו פנויים/פנויות מתאימים.. נסה לרענן את העמוד מאוחר יותר!"
 }
