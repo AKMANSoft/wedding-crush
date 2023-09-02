@@ -1,5 +1,29 @@
 {
     "index": {
-        "next": "Go Next"
+        "next": "Go Next",
+        "join_pool": "הצטרף לבריכת",
+        "singles": "יחידים",
+        "at_wedding":"בחתונה ",
+        "welcome":"ברוך הבא",
+        "ori":"Sharon & Ori's",
+        "wedding":"חֲתוּנָה"
+
+
+
+
+    },
+    "join":{
+        "fill_form": "רק מספר פרטים קטנים",
+        "name":"שם",
+        "gender":"מין",
+        "male":"גברים",
+        "female":"נקבה",
+        "interested":"אני מעוניינ/ת ב",
+        "side":"אני מהצד של",
+        "groom":"החתן",
+        "bride":"הכלה",
+        "upload_selfie":"צרפ/י תמונה (רצוי סלפי)",
+        "done":"סיימנו!"
+
     }
 }

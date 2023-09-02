@@ -1,5 +1,28 @@
 {
     "index": {
-        "next": "Next"
+        "next": "Next",
+        "join_pool": "Join the pool of",
+        "singles": "Singles",
+        "at_wedding":"at the wedding ",
+        "welcome":"Welcome to",
+        "ori":"Sharon & Ori's",
+        "wedding":"Wedding"
+
+
+    },
+    "join": {
+        "fill_form": "Please fill this Form",
+        "name":"Name",
+        "gender":"Gender",
+        "male":"Male",
+        "female":"Female",
+        "interested":"Interested In",
+        "side":"From which side are you?",
+        "groom":"Groom",
+        "bride":"Bride",
+        "upload_selfie":"Upload a Selfie",
+        "done":"Done"
+
+
     }
 }
