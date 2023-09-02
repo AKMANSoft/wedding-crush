@@ -1,5 +1,4 @@
-import type { GetServerSideProps, GetStaticPropsContext, InferGetServerSidePropsType } from 'next'
-import { getServerAuth } from "~/server/auth";
+import type { GetServerSideProps, GetStaticProps, GetStaticPropsContext, InferGetServerSidePropsType, InferGetStaticPropsType } from 'next'
 import { Card, CardContent } from "~/components/ui/card";
 import Image from 'next/image'
 import Typewriter from 'typewriter-effect';
@@ -15,19 +14,19 @@ import { useTranslations } from 'next-intl';
 
 
 
-export const getServerSideProps: GetServerSideProps<{
+export const getStaticProps: GetStaticProps<{
   groomBrideImage: string,
   boyGirlImage: string
 }> = async (ctx) => {
-  const session = await getServerAuth(ctx)
-  if (session) {
-    return {
-      redirect: {
-        destination: "/gallery",
-        permanent: false,
-      }
-    }
-  }
+  // const session = await getServerAuth(ctx)
+  // if (session) {
+  //   return {
+  //     redirect: {
+  //       destination: "/gallery",
+  //       permanent: false,
+  //     }
+  //   }
+  // }
 
   const groomBrideImagePath = path.join(process.cwd(), `/public/images/groom-bride-compressed.svg`)
   const boyGirlImagePath = path.join(process.cwd(), `/public/images/boy-girl-compressed.svg`)
@@ -53,10 +52,10 @@ export const getServerSideProps: GetServerSideProps<{
 
 
 
-export default function Page({ groomBrideImage, boyGirlImage }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Page({ groomBrideImage, boyGirlImage }: InferGetStaticPropsType<typeof getStaticProps>) {
   const [state, setState] = useState<"WELCOME" | "JOIN_POOL">("WELCOME")
   const router = useRouter()
-  const t = useTranslations("index")
+  const t = useTranslations()
 
 
 
