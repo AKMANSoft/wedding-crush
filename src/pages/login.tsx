@@ -80,7 +80,7 @@ export default function Page() {
                     <form onSubmit={form.handleSubmit(handleFormSubmit)}>
                         <CardContent className="p-6 px-5">
                             <div className="flex items-center justify-center">
-                                <h2 className="text-lg border-b-2 border-primary text-center font-light text-secondary font-solway">
+                                <h2 className="text-lg border-b-2 border-primary text-center font-light text-secondary font-solway rtl:font-noto-hebrew">
                                     Please fill details below to login
                                 </h2>
                             </div>

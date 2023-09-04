@@ -24,7 +24,8 @@ export default {
       fontFamily: {
         brittany: "Brittany Signature, sans-serif",
         inter: "Inter, sans-serif",
-        solway: "Solway, sans-serif"
+        solway: "Solway, sans-serif",
+        "noto-hebrew": "'Noto Sans Hebrew', sans-serif"
       },
       keyframes: {
         "accordion-down": {

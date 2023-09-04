@@ -12,7 +12,16 @@ const config = {
   },
   i18n: {
     locales: ["en", "he"],
-    defaultLocale: "en",
+    defaultLocale: "he",
+  },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/welcome',
+        permanent: false,
+      },
+    ]
   },
 };
 

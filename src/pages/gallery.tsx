@@ -5,6 +5,8 @@ import { getAuthUser, getServerAuth } from "~/server/auth";
 import { trpcClient } from "~/utils/api";
 import { TrashIconSvg, femaleGallerySvg, maleGallerySvg } from "~/utils/icons";
 import { User } from "@prisma/client";
+import { useTranslations, useLocale } from 'next-intl';
+import { cn } from "~/utils/common";
 
 
 
@@ -20,7 +22,12 @@ export const getServerSideProps: GetServerSideProps<{ authUser?: User | null }> 
         }
     }
     const authUser = await getAuthUser(session);
-    return { props: { authUser } }
+    return {
+        props: {
+            authUser,
+            messages: (await import(`../../locales/${ctx.locale}.json`)).default
+        }
+    }
 }
 
 
@@ -28,6 +35,8 @@ export const getServerSideProps: GetServerSideProps<{ authUser?: User | null }> 
 
 
 export default function Page({ authUser }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+    const t = useTranslations()
+    const locale = useLocale()
     const { data: users, isLoading } = trpcClient.users.getByInterest.useQuery({ page: 1, perPage: -1 })
     const { mutateAsync: deleteUser } = trpcClient.users.delete.useMutation()
 
@@ -43,8 +52,8 @@ export default function Page({ authUser }: InferGetServerSidePropsType<typeof ge
     return (
         <main className="min-h-screen p-5 pb-[65px]">
             <div className="flex items-center justify-center">
-                <h2 className="text-lg border-b-2 border-primary text-center font-light text-secondary font-solway">
-                    Singles at Wedding
+                <h2 className="text-lg border-b-2 border-primary text-center font-light text-secondary font-solway rtl:font-noto-hebrew">
+                    {t("single_at_wedding")}
                 </h2>
             </div>
             <div className="mt-8">
@@ -57,8 +66,11 @@ export default function Page({ authUser }: InferGetServerSidePropsType<typeof ge
                         (
                             !users || users.length <= 0 ?
                                 <div className="w-full h-full min-h-[600px] flex items-center justify-center">
-                                    <p className="text-secondary font-solway font-medium">
-                                        No singles found with your interest.
+                                    <p className={cn(
+                                        "text-secondary font-solway rtl:font-noto-hebrew",
+                                        locale === "he" ? "font-light" : "font-light"
+                                    )}>
+                                        {t("no_singles")}
                                     </p>
                                 </div>
                                 :
@@ -71,7 +83,7 @@ export default function Page({ authUser }: InferGetServerSidePropsType<typeof ge
                                                         authUser?.type === "ADMIN" &&
                                                         <button type="button"
                                                             onClick={() => handleDeleteClick(user)}
-                                                            className="border-none outline-none absolute top-3 right-3">
+                                                            className="border-none outline-none absolute top-3 end-3">
                                                             {TrashIconSvg()}
                                                         </button>
                                                     }
@@ -80,19 +92,18 @@ export default function Page({ authUser }: InferGetServerSidePropsType<typeof ge
                                                         className="w-full object-cover object-center rounded-xl h-[180px] xs:h-[250px] md:h-[300px]" />
                                                     <div className="p-2 flex items-end justify-between absolute bottom-0 bg-gradient-to-t from-black/80 from-50% to-transparent w-full">
                                                         <div>
-                                                            <h3 className="text-white font-solway text-lg leading-none">
+                                                            <h3 className="text-white font-solway rtl:font-noto-hebrew text-lg leading-none">
                                                                 {user.name}
                                                             </h3>
-                                                            <p className="text-[10px] md:text-xs text-white font-solway">
+                                                            <p className="text-[10px] md:text-xs text-white font-solway rtl:font-noto-hebrew">
                                                                 {
-                                                                    user.side === "BRIDE" ?
-                                                                        "From Bride's Side"
-                                                                        :
-                                                                        "From Groom's Side"
+                                                                    t(user.side === "BRIDE" ? "bride_side" : "groom_side")
 
                                                                 }
                                                             </p>
-                                                            <p className="text-[9px] md:text-xs text-primary font-solway leading-none">Interested in <span className="capitalize">{user.gender.toLowerCase()}</span></p>
+                                                            <p className="text-[9px] md:text-xs text-primary font-solway rtl:font-noto-hebrew leading-none">
+                                                                {t(`interested_in_${user.gender.toLowerCase()}` as ("interested_in_male" | "interested_in_female" | "interested_in_both"))}
+                                                            </p>
                                                         </div>
                                                         <div className="pr-2">
                                                             {

@@ -4,14 +4,17 @@ import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 import "~/styles/tailwind.css";
 import Head from "next/head";
-import Link from "next/link";
 import { trpcClient } from "~/utils/api";
 import { useEffect } from "react";
 import { usePathname } from 'next/navigation'
 import { cn } from "~/utils/common";
+import LanguageSwitchComponent from '~/components/language-switch';
+import I18nLayout from '~/components/i18n-layout';
+import BottomNavigation from '~/components/bottom-navigation';
 
 
-const App: AppType<{ session: Session | null, messages: any }> = ({
+
+const App: AppType<{ session: Session | null, messages?: any }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
@@ -26,41 +29,27 @@ const App: AppType<{ session: Session | null, messages: any }> = ({
   const showBottomNavigation = (pathname.startsWith("/gallery") || pathname.startsWith("/profile"))
 
   return (
-    <NextIntlClientProvider messages={pageProps.messages}>
+    <NextIntlClientProvider messages={pageProps.messages ?? {}}>
       <Head>
         <title>Wedding Crush</title>
         <meta name="description" content="" />
         <link rel="icon" href="/favicon.ico" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin='' />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700&family=Solway:wght@300;400&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@300&display=swap" rel="stylesheet" />
       </Head>
       <SessionProvider session={session}>
-        <div>
+        <I18nLayout>
           <Component {...pageProps} />
-        </div>
-        {
-          showBottomNavigation && (
-            <div className={cn(
-              "w-full flex items-center fixed bottom-0 rounded-t-[20px] h-[44px] overflow-hidden",
-              pathname.startsWith("/profile") ? "bg-white" : "bg-primary"
-            )}>
-              <Link href="/gallery" className={cn(
-                "w-1/2 flex items-center justify-center text-center h-full font-solway",
-                pathname.startsWith("/profile") ? "text-secondary" : "text-white"
-              )}>
-                Gallery
-              </Link>
-              <span className={cn(
-                "block h-[33px] w-[3px] rounded-full",
-                pathname.startsWith("/profile") ? "bg-primary" : "bg-white"
-              )} />
-              <Link href="/profile" className={cn(
-                "w-1/2 flex items-center justify-center text-center h-full font-solway",
-                pathname.startsWith("/profile") ? "text-secondary" : "text-white"
-              )}>
-                Profile
-              </Link>
-            </div>
-          )
-        }
+          <LanguageSwitchComponent />
+          {
+            showBottomNavigation && (
+              <BottomNavigation />
+            )
+          }
+        </I18nLayout>
       </SessionProvider >
     </NextIntlClientProvider >
   );

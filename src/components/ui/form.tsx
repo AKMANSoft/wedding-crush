@@ -1,6 +1,7 @@
 import * as React from "react"
 import * as LabelPrimitive from "@radix-ui/react-label"
 import { Slot } from "@radix-ui/react-slot"
+import { useLocale, useTranslations } from 'next-intl'
 import {
   Controller,
   ControllerProps,
@@ -93,7 +94,7 @@ const FormLabel = React.forwardRef<
   return (
     <Label
       ref={ref}
-      className={cn("text-base font-light font-solway text-secondary", className)}
+      className={cn("text-base font-light font-solway rtl:font-noto-hebrew text-secondary", className)}
       htmlFor={formItemId}
       {...props}
     />
@@ -145,6 +146,7 @@ const FormMessage = React.forwardRef<
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
   const { error, formMessageId } = useFormField()
+  const t = useTranslations()
   const body = error ? String(error?.message) : children
 
   if (!body) {
@@ -155,10 +157,10 @@ const FormMessage = React.forwardRef<
     <p
       ref={ref}
       id={formMessageId}
-      className={cn("text-[0.8rem] font-medium text-red-500", className)}
+      className={cn("text-[0.8rem] font-medium text-red-500 rtl:font-noto-hebrew", className)}
       {...props}
     >
-      {body}
+      {t(body as ("field_required" | "photo_required"))}
     </p>
   )
 })

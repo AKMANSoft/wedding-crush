@@ -15,6 +15,7 @@ import Resizer from "react-image-file-resizer";
 import Image from 'next/image'
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import { getAuthUser, getServerAuth } from "~/server/auth";
+import { useTranslations } from 'next-intl';
 
 
 
@@ -30,7 +31,12 @@ export const getServerSideProps: GetServerSideProps<{ authUser?: User | null }> 
         }
     }
     const authUser = await getAuthUser(session);
-    return { props: { authUser } }
+    return {
+        props: {
+            authUser,
+            messages: (await import(`../../locales/${ctx.locale}.json`)).default
+        }
+    }
 }
 
 
@@ -38,18 +44,19 @@ export const getServerSideProps: GetServerSideProps<{ authUser?: User | null }> 
 
 
 export const updateProfileSchema = z.object({
-    name: z.string({ required_error: "This field is required." }).optional(),
-    image: z.string({ required_error: "Photo required." }).optional(),
-    gender: z.enum([Gender.MALE, Gender.FEMALE], { required_error: "This field is required." }).optional(),
-    interest: z.enum([UserInterest.MALE, UserInterest.FEMALE, UserInterest.BOTH], { required_error: "This field is required." }).optional(),
-    side: z.enum([UserSide.GROOM, UserSide.BRIDE], { required_error: "This field is required." }).optional(),
-    password: z.string({ required_error: "This field is required." }).optional().default("")
+    name: z.string({ required_error: "field_required" }).optional(),
+    image: z.string({ required_error: "photo_required" }).optional(),
+    gender: z.enum([Gender.MALE, Gender.FEMALE], { required_error: "field_required" }).optional(),
+    interest: z.enum([UserInterest.MALE, UserInterest.FEMALE, UserInterest.BOTH], { required_error: "field_required" }).optional(),
+    side: z.enum([UserSide.GROOM, UserSide.BRIDE], { required_error: "field_required" }).optional(),
+    password: z.string({ required_error: "field_required" }).optional().default("")
 })
 
 type UpdateProfileSchema = z.infer<typeof updateProfileSchema>
 
 
 export default function Page({ authUser }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+    const t = useTranslations()
     const form = useForm<UpdateProfileSchema>({
         resolver: zodResolver(updateProfileSchema),
         mode: "onSubmit",
@@ -93,7 +100,7 @@ export default function Page({ authUser }: InferGetServerSidePropsType<typeof ge
                                         name="name"
                                         render={({ field, fieldState }) => (
                                             <FormItem>
-                                                <FormLabel>Your Name</FormLabel>
+                                                <FormLabel>{t("name")}</FormLabel>
                                                 <FormControl>
                                                     <Input {...field} />
                                                 </FormControl>
@@ -106,7 +113,7 @@ export default function Page({ authUser }: InferGetServerSidePropsType<typeof ge
                                         name="gender"
                                         render={({ field, fieldState }) => (
                                             <FormItem>
-                                                <FormLabel>Gender</FormLabel>
+                                                <FormLabel>{t("gender")}</FormLabel>
                                                 <FormControl>
                                                     <ChipsGroup
                                                         value={field.value}
@@ -115,8 +122,16 @@ export default function Page({ authUser }: InferGetServerSidePropsType<typeof ge
                                                             field.onChange(value)
                                                         }}
                                                         options={[
-                                                            { icon: maleSvg, value: Gender.MALE },
-                                                            { icon: femaleSvg, value: Gender.FEMALE },
+                                                            {
+                                                                icon: maleSvg,
+                                                                value: Gender.MALE,
+                                                                label: t("male")
+                                                            },
+                                                            {
+                                                                icon: femaleSvg,
+                                                                value: Gender.FEMALE,
+                                                                label: t("female")
+                                                            },
                                                         ]} />
                                                 </FormControl>
                                                 {fieldState.error && <FormMessage />}
@@ -128,16 +143,28 @@ export default function Page({ authUser }: InferGetServerSidePropsType<typeof ge
                                         name="interest"
                                         render={({ field, fieldState }) => (
                                             <FormItem>
-                                                <FormLabel>Interested in</FormLabel>
+                                                <FormLabel>{t("interested")}</FormLabel>
                                                 <FormControl>
                                                     <ChipsGroup
                                                         value={field.value}
                                                         onChange={(value) => field.onChange(value)}
                                                         chipClassName="w-1/3 px-1"
                                                         options={[
-                                                            { icon: maleSvg, value: UserInterest.MALE },
-                                                            { icon: femaleSvg, value: UserInterest.FEMALE },
-                                                            { icon: bothGenderSvg, value: UserInterest.BOTH },
+                                                            {
+                                                                icon: maleSvg,
+                                                                value: UserInterest.MALE,
+                                                                label: t("male")
+                                                            },
+                                                            {
+                                                                icon: femaleSvg,
+                                                                value: UserInterest.FEMALE,
+                                                                label: t("female")
+                                                            },
+                                                            {
+                                                                icon: bothGenderSvg,
+                                                                value: UserInterest.BOTH,
+                                                                label: t("both")
+                                                            },
                                                         ]} />
                                                 </FormControl>
                                                 {fieldState.error && <FormMessage />}
@@ -149,15 +176,23 @@ export default function Page({ authUser }: InferGetServerSidePropsType<typeof ge
                                         name="side"
                                         render={({ field, fieldState }) => (
                                             <FormItem>
-                                                <FormLabel>From which side are you?</FormLabel>
+                                                <FormLabel>{t("side")}</FormLabel>
                                                 <FormControl>
                                                     <ChipsGroup
                                                         value={field.value}
                                                         chipClassName="w-1/2"
                                                         onChange={(value) => field.onChange(value)}
                                                         options={[
-                                                            { icon: groomIconSvg, value: UserSide.GROOM },
-                                                            { icon: brideIconSvg, value: UserSide.BRIDE },
+                                                            {
+                                                                icon: groomIconSvg,
+                                                                value: UserSide.GROOM,
+                                                                label: t("groom")
+                                                            },
+                                                            {
+                                                                icon: brideIconSvg,
+                                                                value: UserSide.BRIDE,
+                                                                label: t("bride")
+                                                            },
                                                         ]} />
                                                 </FormControl>
                                                 {fieldState.error && <FormMessage />}
@@ -184,12 +219,12 @@ export default function Page({ authUser }: InferGetServerSidePropsType<typeof ge
                             </CardContent>
                             <CardFooter className="flex items-center mt-10 justify-between">
                                 <div></div>
-                                <Button type="submit" disabled={form.formState.isSubmitting || !form.formState.isDirty} className="w-full h-[39px]">
+                                <Button type="submit" disabled={form.formState.isSubmitting || !form.formState.isDirty} className="w-full h-[39px] rtl:font-noto-hebrew">
                                     {
                                         form.formState.isSubmitting ?
                                             <span className="w-5 h-5 border-2 border-white rounded-full border-t-transparent animate-spin" />
                                             :
-                                            "Update"
+                                            t("update")
                                     }
                                 </Button>
                             </CardFooter>
@@ -242,6 +277,7 @@ type PhotoInputComponentProps = {
 }
 
 function PhotoInputComponent({ value, onChange }: PhotoInputComponentProps) {
+    const t = useTranslations()
     const inputRef = useRef<HTMLInputElement>(null);
     const [capturedPhoto, setCapturedPhoto] = useState<string | null>();
 
@@ -272,9 +308,9 @@ function PhotoInputComponent({ value, onChange }: PhotoInputComponentProps) {
                 hidden
                 accept="image/*"
                 className="hidden" />
-            <Button type="button" className="w-full flex items-center justify-center gap-3 h-[35px]"
+            <Button type="button" className="w-full flex items-center justify-center gap-3 h-[35px] rtl:font-noto-hebrew"
                 onClick={() => inputRef.current?.click()}>
-                <UploadIcon /> <span>{capturedPhoto ? "Change Photo" : "Update Selfie"}</span>
+                <UploadIcon /> <span>{t("update_selfie")}</span>
             </Button>
         </div >
     )

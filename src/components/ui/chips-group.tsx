@@ -4,6 +4,7 @@ import Image from 'next/image'
 
 
 type ChipOption = {
+    label: string;
     value: string;
     icon: (active: boolean) => JSX.Element;
 }
@@ -36,7 +37,7 @@ export default function ChipsGroup({ value, onChange, options, chipClassName }: 
                     <button type="button" key={opt.value}
                         onClick={() => setActiveChip(opt)}
                         className={cn(
-                            "outline-none border border-primary px-5 py-1.5 rounded-full text-sm font-light capitalize text-secondary",
+                            "outline-none border border-primary px-5 py-1.5 rounded-full text-sm font-light rtl:font-noto-hebrew capitalize text-secondary",
                             "flex items-center justify-center gap-2",
                             opt.value === activeChip?.value && "bg-primary shadow-lg text-white",
                             chipClassName
@@ -44,7 +45,7 @@ export default function ChipsGroup({ value, onChange, options, chipClassName }: 
                         <span className="fill-primary">
                             {opt.icon(opt.value === activeChip?.value)}
                         </span>
-                        <span>{opt.value.toLowerCase()}</span>
+                        <span>{opt.label}</span>
                     </button>
                 ))
             }

@@ -5,7 +5,7 @@ import Typewriter from 'typewriter-effect';
 import { motion } from 'framer-motion'
 import { BottomReveal, PopupReveal, TopLeftReveal, TopRightReveal } from "~/components/framer-components";
 import { useRouter } from 'next/navigation'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import path from 'path';
 import fs from 'fs/promises'
 import { Button } from '~/components/ui/button';
@@ -29,23 +29,22 @@ export const getStaticProps: GetStaticProps<{
   // }
 
   const groomBrideImagePath = path.join(process.cwd(), `/public/images/groom-bride-compressed.svg`)
-  const boyGirlImagePath = path.join(process.cwd(), `/public/images/boy-girl-compressed.svg`)
+  // const boyGirlImagePath = path.join(process.cwd(), `/public/images/boy-girl-compressed.svg`)
   let groomBrideImage: string;
   let boyGirlImage: string;
 
   try {
     groomBrideImage = 'data:image/svg+xml;base64,' + Buffer.from(await fs.readFile(groomBrideImagePath)).toString('base64')
-    boyGirlImage = 'data:image/svg+xml;base64,' + Buffer.from(await fs.readFile(boyGirlImagePath)).toString('base64')
+    // boyGirlImage = 'data:image/svg+xml;base64,' + Buffer.from(await fs.readFile(boyGirlImagePath)).toString('base64')
   } catch {
-    groomBrideImage = "/images/groom-bride-compressed.svg"
-    boyGirlImage = "/images/boy-girl-compressed.svg"
   }
+  groomBrideImage = "/images/groom-bride-compressed.svg"
+  boyGirlImage = "/images/boy-girl-compressed.svg"
 
   return {
     props: {
       groomBrideImage,
       boyGirlImage,
-      messages: (await import(`../../locales/${ctx.locale}.json`)).default
     }
   }
 }
@@ -59,9 +58,13 @@ export default function Page({ groomBrideImage, boyGirlImage }: InferGetStaticPr
 
 
 
+  useEffect(() => {
+    router.prefetch("/welcome/pool-of-singles")
+  }, [router])
+
+
   const handleNextClick = () => {
-    if (state === "JOIN_POOL") router.push("/join")
-    if (state === "WELCOME") setState("JOIN_POOL")
+    router.push("/welcome/pool-of-singles")
   }
 
 
@@ -75,7 +78,7 @@ export default function Page({ groomBrideImage, boyGirlImage }: InferGetStaticPr
       }
       <div className='flex items-center justify-center mt-2 w-full max-w-[600px]'>
         <Button type='button' onClick={handleNextClick} variant="light" className='gap-3 w-full h-[39px]'>
-          <span>{t("index.next")}</span>
+          <span>{t("next")}</span>
           <ArrowRightIcon className='w-4 h-4' />
         </Button>
       </div>
@@ -92,8 +95,6 @@ type WelcomeCardProps = {
 }
 
 function WelcomeCard({ onFinish, groomBrideImage }: WelcomeCardProps) {
-  const t = useTranslations()
-
   return (
     <Card className="w-full max-w-[600px] h-fit rounded-md overflow-hidden bg-white">
       <CardContent className="p-0 h-auto">
@@ -118,7 +119,7 @@ function WelcomeCard({ onFinish, groomBrideImage }: WelcomeCardProps) {
             <h4 className="text-secondary font-solway transition-all h-9 font-light text-xl mt-3">
               <Typewriter
                 options={{
-                  strings: t("index.welcome"),
+                  strings: "Welcome to",
                   autoStart: true,
                   loop: false,
                   cursorClassName: "hidden"
@@ -127,15 +128,15 @@ function WelcomeCard({ onFinish, groomBrideImage }: WelcomeCardProps) {
             </h4>
             <PopupReveal className="w-[80%]" bounce={0.5}>
               <Image
-                width={600} height={300}
-                priority
+                width={600} height={300} loading='eager'
+                priority fetchPriority='high'
                 src={groomBrideImage} alt=""
                 className="w-full h-auto mt-10" />
             </PopupReveal>
             <h1 className="font-brittany text-4xl h-[40px] text-primary">
               <Typewriter
                 options={{
-                  strings: t("index.ori"),
+                  strings: "Sharon & Ori's",
                   autoStart: true,
                   loop: false,
                   cursorClassName: "hidden"
@@ -145,7 +146,7 @@ function WelcomeCard({ onFinish, groomBrideImage }: WelcomeCardProps) {
             <motion.h4 className="text-secondary font-solway h-9 font-light text-xl mt-3">
               <Typewriter
                 options={{
-                  strings: t("index.wedding"),
+                  strings: "Wedding",
                   autoStart: true,
                   loop: false,
                   cursorClassName: "hidden"
@@ -207,8 +208,8 @@ function JoinPool({ onFinish, boyGirlImage }: JoinPoolProps) {
             <PopupReveal className="w-[80%]" bounce={0.5}>
               <Image
                 width={600} height={300}
-                src={boyGirlImage} alt=""
-                priority
+                src={boyGirlImage} alt="" loading='eager'
+                priority fetchPriority='high'
                 className="w-full h-auto mt-10" />
             </PopupReveal>
             <h1 className="font-brittany text-4xl h-[40px] text-primary">
