@@ -126,7 +126,7 @@ function JoinPool({ onFinish, boyGirlImage }: JoinPoolProps) {
             <motion.h4 className="text-secondary font-solway h-9 font-light text-xl mt-3">
               <Typewriter
                 options={{
-                  strings: "at Wedding",
+                  strings: "at the Wedding",
                   autoStart: true,
                   loop: false,
                   cursorClassName: "hidden"

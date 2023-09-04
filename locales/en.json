@@ -1,6 +1,6 @@
 {
         "next": "Next",
-        "join_pool": "Join the pool of",
+        "join_pool": "Join the pool of  ",
         "singles": "Singles",
         "at_wedding": "at the wedding ",
         "welcome": "Welcome to",
@@ -27,7 +27,7 @@
         "interested_in_male": "Interested in Males",
         "interested_in_female": "Interested in Females",
         "interested_in_both": "Interested in both",
-        "single_at_wedding": "Singles at Wedding",
+        "single_at_wedding": "Singles at the Wedding",
         "no_singles": "There are no singles that answer your interest",
         "gallery": "Gallery",
         "profile": "Profile",
