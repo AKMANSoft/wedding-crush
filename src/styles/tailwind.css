@@ -5,10 +5,28 @@
 
 html {
     font-family: 'Inter', sans-serif;
+    height: -webkit-fill-available;
+}
+
+
+body {
+    width: 100%;
+    height: 100vh;
+    min-height: -webkit-fill-available;
+    max-height: -webkit-fill-available;
+}
+
+* {
+    box-sizing: border-box;
 }
 
 
 @font-face {
     font-family: "Brittany Signature";
     src: url("/fonts/brittany-signature.ttf") format("truetype");
+}
+
+
+.Typewriter{
+    height: 100%px !important;
 }

@@ -334,7 +334,7 @@ function ImagePreviewPopup({ image }: ImagePreviewPopupProps) {
                     <ZoomInIcon className="w-6 h-6  text-white" />
                 </div>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-lg min-h-screen p-0 flex items-center justify-center bg-white">
+            <DialogContent className="sm:max-w-lg h-screen max-h-[90vh] p-0 flex items-center justify-center bg-white">
                 <Image src={image} alt="" width={600} height={600} className="aspect-auto w-full h-auto" />
             </DialogContent>
         </Dialog>

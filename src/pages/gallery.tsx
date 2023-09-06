@@ -50,7 +50,7 @@ export default function Page({ authUser }: InferGetServerSidePropsType<typeof ge
 
 
     return (
-        <main className="min-h-screen p-5 pb-[65px]">
+        <main className="min-h-screen p-5 py-[65px]">
             <div className="flex items-center justify-center">
                 <h2 className="text-lg border-b-2 border-primary text-center font-light text-secondary font-solway rtl:font-noto-hebrew">
                     {t("single_at_wedding")}

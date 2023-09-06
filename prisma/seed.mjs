@@ -5,9 +5,9 @@ import bcrypt from 'bcryptjs'
 async function main() {
     await prisma.user.upsert({
         create: {
-            username: "admin",
+            username: "orirgv",
             name: "Admin",
-            password: await bcrypt.hash("12345678", 10),
+            password: await bcrypt.hash("Bess0fat", 10),
             type: "ADMIN",
             gender: "MALE",
             image: "",

@@ -1,11 +1,11 @@
-import type { GetServerSideProps, GetStaticProps, GetStaticPropsContext, InferGetServerSidePropsType, InferGetStaticPropsType } from 'next'
+import type { GetStaticProps, InferGetStaticPropsType } from 'next'
 import { Card, CardContent } from "~/components/ui/card";
 import Image from 'next/image'
 import Typewriter from 'typewriter-effect';
 import { motion } from 'framer-motion'
 import { BottomReveal, PopupReveal, TopLeftReveal, TopRightReveal } from "~/components/framer-components";
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import path from 'path';
 import fs from 'fs/promises'
 import { Button } from '~/components/ui/button';
@@ -46,10 +46,7 @@ export const getStaticProps: GetStaticProps<{
 
 
 export default function Page({ groomBrideImage }: InferGetStaticPropsType<typeof getStaticProps>) {
-  const [state, setState] = useState<"WELCOME" | "JOIN_POOL">("WELCOME")
   const router = useRouter()
-  const t = useTranslations()
-
 
 
   useEffect(() => {
@@ -63,7 +60,7 @@ export default function Page({ groomBrideImage }: InferGetStaticPropsType<typeof
 
 
   return (
-    <main className=" flex min-h-screen flex-col items-center justify-center py-20 px-4 bg-primary">
+    <main className="flex flex-col min-h-screen items-center justify-center py-16 md:py-20 px-4 bg-primary">
       <WelcomeCard groomBrideImage={groomBrideImage} />
       <div className='flex items-center justify-center mt-2 w-full max-w-[600px]'>
         <Button type='button' onClick={handleNextClick} variant="light" className='gap-3 w-full h-[39px]'>
@@ -85,7 +82,7 @@ type WelcomeCardProps = {
 
 function WelcomeCard({ onFinish, groomBrideImage }: WelcomeCardProps) {
   return (
-    <Card className="w-full max-w-[600px] h-fit rounded-md overflow-hidden bg-white">
+    <Card className="w-full max-w-[600px] h-fit rounded-md -mt-8 overflow-hidden bg-white">
       <CardContent className="p-0 h-auto">
         <motion.div className="relative w-full h-auto">
           <motion.div className="sticky top-0 flex items-start justify-between w-full z-0">
@@ -115,17 +112,18 @@ function WelcomeCard({ onFinish, groomBrideImage }: WelcomeCardProps) {
                 }}
               />
             </h4>
-            <PopupReveal className="w-[80%]" bounce={0.5}>
+            <PopupReveal className="w-[80%] mt-5" bounce={0.5}>
               <Image
                 width={600} height={300} loading='eager'
                 priority fetchPriority='high'
                 src={groomBrideImage} alt=""
-                className="w-full h-auto mt-10" />
+                className="w-full h-auto" />
             </PopupReveal>
-            <h1 className="font-brittany text-4xl h-[40px] text-primary">
+            <h1 className="font-brittany text-4xl pb-2 h-[52px] will-change-transform text-primary">
               <Typewriter
                 options={{
                   strings: "Sharon & Ori's",
+                  wrapperClassName: "flex items-center h-[65px]",
                   autoStart: true,
                   loop: false,
                   cursorClassName: "hidden"

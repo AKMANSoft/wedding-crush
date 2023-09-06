@@ -90,7 +90,7 @@ export default function Page({ authUser }: InferGetServerSidePropsType<typeof ge
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(handleFormSubmit)}>
                             <CardContent className="p-6 px-5 relative">
-                                <div className="absolute -top-[80px] bg-white border-[5px] border-primary rounded-full left-1/2 w-[118px] h-auto aspect-square -translate-x-1/2">
+                                <div className="absolute -top-[80px] bg-white border-[5px] border-primary rounded-full left-1/2 w-[118px] h-[118px] aspect-square -translate-x-1/2">
                                     <Image src={form.getValues("image") ?? ""} alt={authUser.name} width={114} height={114}
                                         className="w-full h-full object-cover object-center rounded-full" />
                                 </div>
@@ -153,12 +153,12 @@ export default function Page({ authUser }: InferGetServerSidePropsType<typeof ge
                                                             {
                                                                 icon: maleSvg,
                                                                 value: UserInterest.MALE,
-                                                                label: t("male")
+                                                                label: t("males")
                                                             },
                                                             {
                                                                 icon: femaleSvg,
                                                                 value: UserInterest.FEMALE,
-                                                                label: t("female")
+                                                                label: t("females")
                                                             },
                                                             {
                                                                 icon: bothGenderSvg,

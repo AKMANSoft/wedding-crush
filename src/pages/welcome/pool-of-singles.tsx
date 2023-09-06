@@ -46,7 +46,6 @@ export const getStaticProps: GetStaticProps<{
 
 
 export default function Page({ boyGirlImage }: InferGetStaticPropsType<typeof getStaticProps>) {
-  const [state, setState] = useState<"WELCOME" | "JOIN_POOL">("WELCOME")
   const router = useRouter()
   const t = useTranslations()
 
@@ -56,7 +55,7 @@ export default function Page({ boyGirlImage }: InferGetStaticPropsType<typeof ge
   }
 
   return (
-    <main className=" flex min-h-screen flex-col items-center justify-center py-20 px-4 bg-primary">
+    <main className=" flex min-h-screen flex-col items-center justify-center py-16 md:py-20 px-4 bg-primary">
       <JoinPool boyGirlImage={boyGirlImage} />
       <div className='flex items-center justify-center mt-2 w-full max-w-[600px]'>
         <Button type='button' onClick={handleNextClick} variant="light" className='gap-3 w-full h-[39px]'>
@@ -76,7 +75,7 @@ type JoinPoolProps = {
 
 function JoinPool({ onFinish, boyGirlImage }: JoinPoolProps) {
   return (
-    <Card className="w-full max-w-[600px] h-fit rounded-md overflow-hidden bg-white">
+    <Card className="w-full max-w-[600px] h-fit rounded-md -mt-8 overflow-hidden bg-white">
       <CardContent className="p-0 h-auto">
         <motion.div className="relative w-full h-auto">
           <motion.div className="sticky top-0 flex items-start justify-between w-full z-0">
@@ -106,20 +105,21 @@ function JoinPool({ onFinish, boyGirlImage }: JoinPoolProps) {
                 }}
               />
             </h4>
-            <PopupReveal className="w-[80%]" bounce={0.5}>
+            <PopupReveal className="w-[80%] mt-8" bounce={0.5}>
               <Image
                 width={600} height={300}
                 src={boyGirlImage} alt="" loading='eager'
                 priority fetchPriority='high'
-                className="w-full h-auto mt-10" />
+                className="w-full h-auto" />
             </PopupReveal>
-            <h1 className="font-brittany text-4xl h-[40px] text-primary">
+            <h1 className="font-brittany text-4xl h-auto pb-2 text-primary">
               <Typewriter
                 options={{
                   strings: "Singles",
                   autoStart: true,
                   loop: false,
-                  cursorClassName: "hidden"
+                  cursorClassName: "hidden",
+                  wrapperClassName: "flex items-center h-[65px]",
                 }}
               />
             </h1>
